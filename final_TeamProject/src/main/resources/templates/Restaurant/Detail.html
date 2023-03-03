@@ -17,7 +17,7 @@
 .items-slider-container .slider-for {background-color: #fff;margin-bottom: 0;}
 .items-slider-container .slider-for img {
   max-width: 100%;
-  height: 500px;
+  height: 500px; 
   width: 1000px;
   max-height: 100%;
   margin: 10px;
@@ -149,6 +149,67 @@ $(function(){
 		  });
 		});
 	
+	var data =  {"restauNo" : $("#restauNo").val()};
+	
+	// 찜 여부 검색
+	$.ajax({
+		url:"/restau/findLike",
+		data:data,
+		success:function(re){
+			if(re == 0){
+				// 찜 안한상태
+				$("#div_dolike").removeClass("unshow");
+				$("#div_dolike").addClass("show");
+				$("#div_unlike").addClass("unshow");
+			}else{
+				// 찜한 상태
+				$("#div_unlike").removeClass("unshow");
+				$("#div_dolike").addClass("unshow");
+				$("#div_unlike").addClass("show");
+			}
+		}
+	})
+	
+	// 찜하기
+	$("#btn_dolike").click(function(){
+		$.ajax({
+			url:"/restau/dolike",
+			data:data,
+			success:function(re){
+				alert(re)
+				$("#div_dolike").removeClass("show");
+				$("#div_dolike").addClass("unshow");
+				$("#div_unlike").addClass("show");
+			}
+		})
+	})
+	
+	// 찜해제
+	$("#btn_unlike").click(function(){
+		$.ajax({
+			url:"/restau/unlike",
+			data:data,
+			success:function(re){
+				alert(re)
+				$("#div_unlike").removeClass("show");
+				$("#div_unlike").addClass("unshow");
+				$("#div_dolike").addClass("show");
+			}
+		})
+	})
+	
+	$("#btn_dolike").hover(function(){
+		$(this).attr("src", "/main/like.png")
+	},function(){
+		$(this).attr("src", "/main/unlike.png")
+	})
+	
+	$("#btn_unlike").hover(function(){
+		$(this).attr("src", "/main/unlike.png")
+	},function(){
+		$(this).attr("src", "/main/like.png")
+	})
+	
 });
 
 </script>
@@ -163,32 +224,54 @@ $(function(){
 
 <div class="container">
 <!-- 정보 -->
-	<h1 th:text="${a.name}" id="name"></h1>
+	<h1 th:text="${r.name}" id="name"></h1>
+	<input type="hidden" th:value="${r.restauNo}" id="restauNo">
 	<br>
 	<div>
 		<span style="font-size: 1.3em; font-weight: normal;">[식당유형] &nbsp;</span>
-		<span style="font-size: 1.2em; font-weight: lighter;" th:text="${a.category}"></span>
+		<span style="font-size: 1.2em; font-weight: lighter;" th:text="${r.category}"></span>
 		<span style="font-size: 1.3em; font-weight: normal;">&nbsp;&nbsp;[주소] &nbsp;</span>
-		<span style="font-size: 1.2em; font-weight: lighter;" th:text="${a.addr}"></span>
+		<span style="font-size: 1.2em; font-weight: lighter;" th:text="${r.addr}"></span>
 		<span style="font-size: 1.3em; font-weight: normal;">&nbsp;&nbsp;[전화번호] &nbsp;</span>
-		<span style="font-size: 1.2em; font-weight: lighter;" th:text="${a.phone}"></span>
+		<span style="font-size: 1.2em; font-weight: lighter;" th:text="${r.phone}"></span>
 	</div>
 	
 	<div class="items-slider-container js-items-slider-container">
 	       <div class="slider slider-for">
-            <div th:each="path: ${photoList}">
-                <img th:src="|/${path}|">
+            <div th:each="p: ${photoList}">
+                <img th:src="|/${p.RealPath}|">
             </div>
         </div>        
         <div class="slider slider-nav" style="width: 1005px;height: 110px;">           
-            <div th:each="path: ${photoList}">
-                <img th:src="|/${path}|">
+            <div th:each="p: ${photoList}">
+                <img th:src="|/${p.RealPath}|">
             </div>
         </div>     
     </div>
     </div>
+    
+    <!-- 찜기능 -->
+	<th:block th:if="${session.loginM != null and session.loginM.role != 'admin'}">
+		<span th:text="${session.loginM.role}"></span><br>
+		<span th:text="${session.loginM.name}"></span><br>
+		<div id="div_dolike" class="unshow">
+				<input type="image" src="/main/unlike.png" id="btn_dolike" width="40">
+		</div>
+		<div id="div_unlike" class="unshow">
+				<input type="image" src="/main/like.png" id="btn_unlike" width="40">
+		</div>
+	</th:block>
+	
+	<!-- 관리자 기능 -->
+	
+	<th:block th:if="${session.loginM != null and session.loginM.role != 'user'}">
+		<div>
+			<span th:text="${session.loginM.role}"></span><br>
+			<input type="button" id="btn_update" value="식당 정보 수정"
+			th:onclick="|location.href='@{'/admin/restau/update/'+${r.restauNo}}'|">
+		</div>
+	</th:block>
+	
 
-	
-	
 </body>
 </html>

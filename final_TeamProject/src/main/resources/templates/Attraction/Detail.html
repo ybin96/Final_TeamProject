@@ -102,16 +102,16 @@
 </style>
 
 <!-- jQuery -->
-  <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
-  <!-- iamport.payment.js -->
-  <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+<!-- iamport.payment.js -->
+<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
   
 
 <script src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css" />
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css" />
 
-  <script type="text/javascript">
+<script type="text/javascript">
   $(function(){
 		
 		$.noConflict();	// 충돌방지 코드
@@ -149,8 +149,71 @@
 			  });
 			});
 		
+		var data =  {"attractNo" : $("#attractNo").val()};
+		
+		// 찜 여부 검색
+		$.ajax({
+			url:"/attract/findLike",
+			data:data,
+			success:function(re){
+				if(re == 0){
+					// 찜 안한상태
+					$("#div_dolike").removeClass("unshow");
+					$("#div_dolike").addClass("show");
+					$("#div_unlike").addClass("unshow");
+				}else{
+					// 찜한 상태
+					$("#div_unlike").removeClass("unshow");
+					$("#div_dolike").addClass("unshow");
+					$("#div_unlike").addClass("show");
+				}
+			}
+		})
+		
+		// 찜하기
+		$("#btn_dolike").click(function(){
+			console.log(data);
+			$.ajax({
+				url:"/attract/dolike",
+				data:data,
+				success:function(re){
+					alert(re)
+					$("#div_dolike").removeClass("show");
+					$("#div_dolike").addClass("unshow");
+					$("#div_unlike").addClass("show");
+				}
+			})
+		})
+		
+		// 찜해제
+		$("#btn_unlike").click(function(){
+			console.log(data);
+			$.ajax({
+				url:"/attract/unlike",
+				data:data,
+				success:function(re){
+					alert(re)
+					$("#div_unlike").removeClass("show");
+					$("#div_unlike").addClass("unshow");
+					$("#div_dolike").addClass("show");
+				}
+			})
+		})
+		
+		$("#btn_dolike").hover(function(){
+			$(this).attr("src", "/main/like.png")
+		},function(){
+			$(this).attr("src", "/main/unlike.png")
+		})
+		
+		$("#btn_unlike").hover(function(){
+			$(this).attr("src", "/main/unlike.png")
+		},function(){
+			$(this).attr("src", "/main/like.png")
+		})
+		
 	});
-  </script>
+</script>
 </head>
 <body>
 <!-- 헤더 -->
@@ -159,31 +222,53 @@
 
 
 	<div class="container">
-<!-- 정보 -->
-	<h1 th:text="${a.name}" id="name"></h1>
-	<br>
-	<div>
-		<span style="font-size: 1.3em; font-weight: normal;">[관광지유형] &nbsp;</span>
-		<span style="font-size: 1.2em; font-weight: lighter;" th:text="${a.category}"></span>
-		<span style="font-size: 1.3em; font-weight: normal;">&nbsp;&nbsp;[주소] &nbsp;</span>
-		<span style="font-size: 1.2em; font-weight: lighter;" th:text="${a.addr}"></span>
-		<span style="font-size: 1.3em; font-weight: normal;">&nbsp;&nbsp;[전화번호] &nbsp;</span>
-		<span style="font-size: 1.2em; font-weight: lighter;" th:text="${a.phone}"></span>
-	</div>
+		<!-- 정보 -->
+		<h1 th:text="${a.name}" id="name"></h1>
+		<input type="hidden" th:value="${a.attractNo}" id="attractNo">
+		<br>
+		<div>
+			<span style="font-size: 1.3em; font-weight: normal;">[관광지유형] &nbsp;</span>
+			<span style="font-size: 1.2em; font-weight: lighter;" th:text="${a.category}"></span>
+			<span style="font-size: 1.3em; font-weight: normal;">&nbsp;&nbsp;[주소] &nbsp;</span>
+			<span style="font-size: 1.2em; font-weight: lighter;" th:text="${a.addr}"></span>
+			<span style="font-size: 1.3em; font-weight: normal;">&nbsp;&nbsp;[전화번호] &nbsp;</span>
+			<span style="font-size: 1.2em; font-weight: lighter;" th:text="${a.phone}"></span>
+		</div>
+		
+		<div class="items-slider-container js-items-slider-container">
+		    <div class="slider slider-for">
+	            <div th:each="path: ${photoList}">
+	                <img th:src="|/${path}|">
+	            </div>
+	        </div>        
+	        <div class="slider slider-nav" style="width: 1005px;height: 110px;">           
+	            <div th:each="path: ${photoList}">
+	                <img th:src="|/${path}|">
+	            </div>
+	        </div>     
+	    </div>
+    </div>
+    
+    <!-- 찜기능 -->
+	<th:block th:if="${session.loginM != null and session.loginM.role != 'admin'}">
+		<span th:text="${session.loginM.role}"></span><br>
+		<span th:text="${session.loginM.name}"></span><br>
+		<div id="div_dolike" class="unshow">
+				<input type="image" src="/main/unlike.png" id="btn_dolike" width="40">
+		</div>
+		<div id="div_unlike" class="unshow">
+				<input type="image" src="/main/like.png" id="btn_unlike" width="40">
+		</div>
+	</th:block>
 	
-	<div class="items-slider-container js-items-slider-container">
-	       <div class="slider slider-for">
-            <div th:each="path: ${photoList}">
-                <img th:src="|/${path}|">
-            </div>
-        </div>        
-        <div class="slider slider-nav" style="width: 1005px;height: 110px;">           
-            <div th:each="path: ${photoList}">
-                <img th:src="|/${path}|">
-            </div>
-        </div>     
-    </div>
-    </div>
+	<!-- 관리자 기능 -->
+	<div>
+		<th:block th:if="${session.loginM != null and session.loginM.role != 'user'}">
+			<span th:text="${session.loginM.role}"></span><br>
+			<input type="button" id="btn_update" value="관광지 정보 수정"
+			th:onclick="|location.href='@{'/admin/attract/update/'+${a.attractNo}}'|">
+		</th:block>
+	</div>
 	
 	
 		<h4>소개글</h4>
@@ -200,8 +285,6 @@
 		<h5 th:text="${infoList.parkingamount}"></h5>
 		<h4>편의시설</h4>
 		<h5 th:text="${infoList.facilities}"></h5>
-	</div>
-	
 	
 </body>
 </html>

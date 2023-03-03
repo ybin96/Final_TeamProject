@@ -46,6 +46,40 @@ public class RestaurantDAO {
 	public List<LikeVO> findMostLike(int count){
 		return DBManager.findMostLike(count);
 	}
+
+	public LikeVO findLikeByM(HashMap<String, Object> map) {
+		return DBManager.findLikeByM(map);
+	}
+	
+	public int doLike(LikeVO l) {
+		return DBManager.doLike(l);
+	}
+	
+	public int unLike(LikeVO l) {
+		return DBManager.unLike(l);
+	}
+
+	public int updateById(RestaurantVO r) {
+		// TODO Auto-generated method stub
+		return DBManager.updateById(r);
+	}
+
+	public int deleteById(int restauNo) {
+		return DBManager.deleteById(restauNo);
+	}
+
+	public int insertPhoto(RestaurantPhotoVO rp) {
+		return DBManager.insertPhoto(rp);
+		
+	}
+
+	public List<RestaurantVO> detailSearch(HashMap<String, Object> map) {
+		return DBManager.detailSearch(map);
+	}
+
+	public int findCountBydetailSearch(HashMap<String, Object> map) {
+		return DBManager.findCountBydetailSearch(map);
+	}
 	
 	
 }

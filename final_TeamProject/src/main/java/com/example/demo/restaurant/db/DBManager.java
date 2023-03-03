@@ -8,7 +8,6 @@ import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
-
 import com.example.demo.restaurant.vo.LikeVO;
 import com.example.demo.restaurant.vo.RestaurantPhotoVO;
 import com.example.demo.restaurant.vo.RestaurantVO;
@@ -83,6 +82,68 @@ public class DBManager {
 		List<LikeVO> list = session.selectList("like.findMostLike", count);
 		session.close();
 		return list;
+	}
+
+	public static LikeVO findLikeByM(HashMap<String, Object> map) {
+		SqlSession session = sqlSessionFactory.openSession();
+		LikeVO l = session.selectOne("like.findLikeByM", map);
+		session.close();
+		return l;
+	}
+	
+	public static int doLike(LikeVO l) {
+		int re = 0;
+		SqlSession session = sqlSessionFactory.openSession(true);
+		re = session.insert("like.doLike", l);
+		session.close();
+		return re;
+	}
+	
+	public static int unLike(LikeVO l) {
+		int re = 0;
+		SqlSession session = sqlSessionFactory.openSession(true);
+		re = session.delete("like.unLike", l);
+		session.close();
+		return re;
+	}
+
+	public static int updateById(RestaurantVO r) {
+		int re = 0;
+		SqlSession session = sqlSessionFactory.openSession(true);
+		re = session.update("restau.updateById", r);
+		session.close();
+		return re;
+	}
+
+	public static int deleteById(int restauNo) {
+		int re = 0;
+		SqlSession session = sqlSessionFactory.openSession(true);
+		re = session.delete("restau.deleteById", restauNo);
+		session.close();
+		return re;
+	}
+
+	public static int insertPhoto(RestaurantPhotoVO rp) {
+		int re = 0;
+		SqlSession session = sqlSessionFactory.openSession(true);
+		re = session.insert("restaurantPhoto.insertPhoto", rp);
+		session.close();
+		return re;
+	}
+
+	public static List<RestaurantVO> detailSearch(HashMap<String, Object> map) {
+		SqlSession session = sqlSessionFactory.openSession();
+		List<RestaurantVO> list = session.selectList("restau.detailSearch", map);
+		session.close();
+		return list;
+	}
+
+	public static int findCountBydetailSearch(HashMap<String, Object> map) {
+		int re = 0;
+		SqlSession session = sqlSessionFactory.openSession();
+		re= session.selectOne("restau.findCountBydetailSearch", map);
+		session.close();
+		return re;
 	}
 	
 	

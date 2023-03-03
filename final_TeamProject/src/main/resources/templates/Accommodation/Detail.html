@@ -12,7 +12,7 @@
 	.show{
 		display: inline;
 	}
-
+ 
 /* 사진 슬라이더 css 시작 */
 .items-slider-container .slider-for {background-color: #fff;margin-bottom: 0;}
 .items-slider-container .slider-for img {
@@ -99,6 +99,18 @@
 }
 /* 사진 슬라이더 css 끝 */
 
+#sidebarright {
+    float: right;
+    display:inline;
+    width: 25%;
+}
+
+#sidebarleft {
+    float: left;
+    display:inline;
+    width: 25%;
+}
+
 </style>
   <!-- jQuery -->
   <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
@@ -150,7 +162,7 @@
 			});
 	
 		
-		var data =  {"accommoNo" : $("#accommoNo").val()};
+var data =  {"accommoNo" : $("#accommoNo").val()};
 		
 		// 찜 여부 검색
 		$.ajax({
@@ -169,6 +181,46 @@
 					$("#div_unlike").addClass("show");
 				}
 			}
+		})
+		
+		// 찜하기
+		$("#btn_dolike").click(function(){
+			$.ajax({
+				url:"/accommo/dolike",
+				data:data,
+				success:function(re){
+					alert(re)
+					$("#div_dolike").removeClass("show");
+					$("#div_dolike").addClass("unshow");
+					$("#div_unlike").addClass("show");
+				}
+			})
+		})
+		
+		// 찜해제
+		$("#btn_unlike").click(function(){
+			$.ajax({
+				url:"/accommo/unlike",
+				data:data,
+				success:function(re){
+					alert(re)
+					$("#div_unlike").removeClass("show");
+					$("#div_unlike").addClass("unshow");
+					$("#div_dolike").addClass("show");
+				}
+			})
+		})
+		
+		$("#btn_dolike").hover(function(){
+			$(this).attr("src", "/main/like.png")
+		},function(){
+			$(this).attr("src", "/main/unlike.png")
+		})
+		
+		$("#btn_unlike").hover(function(){
+			$(this).attr("src", "/main/unlike.png")
+		},function(){
+			$(this).attr("src", "/main/like.png")
 		})
 		
 		var IMP = window.IMP; // 생략 가능
@@ -267,7 +319,7 @@
 				}
 			$("#totDate").val(diffDate+"박/"+(diffDate+1)+"일");
 			
-			var price = $("#price").text();
+			var price = $("#price").val();
 			var headCount = $("#headCount").val();
 			var totalPrice = price*diffDate*headCount;
 			if (isNaN(totalPrice)) {
@@ -291,7 +343,7 @@
 				}
 			$("#totDate").val(diffDate+"박/"+(diffDate+1)+"일");
 			
-			var price = $("#price").text();
+			var price = $("#price").val();
 			var headCount = $("#headCount").val();
 			var totalPrice = price*diffDate*headCount;
 			if (isNaN(totalPrice)) {
@@ -302,7 +354,7 @@
 		
 		$("body").on("change", "#headCount", function(){
 			
-			var price = $("#price").text();
+			var price = $("#price").val();
 			var headCount = $("#headCount").val();
 			var totalPrice = price*diffDate*headCount;
 			if (isNaN(totalPrice)) {
@@ -310,109 +362,109 @@
 				}
 			$("#totalPrice").val(totalPrice);
 		})
-		
-		// 찜하기
-		$("#btn_dolike").click(function(){
-			$.ajax({
-				url:"/accommo/dolike",
-				data:data,
-				success:function(re){
-					alert(re)
-					$("#div_dolike").removeClass("show");
-					$("#div_dolike").addClass("unshow");
-					$("#div_unlike").addClass("show");
-				}
-			})
-		})
-		
-		// 찜해제
-		$("#btn_unlike").click(function(){
-			$.ajax({
-				url:"/accommo/unlike",
-				data:data,
-				success:function(re){
-					alert(re)
-					$("#div_unlike").removeClass("show");
-					$("#div_unlike").addClass("unshow");
-					$("#div_dolike").addClass("show");
-				}
-			})
-		})
 	}) 
   </script>
 </head>
 <body>
-	<!-- 헤더 -->
-    <div th:insert="/main/Header.html"></div>
-<!-- ====================================================================================== -->
+	
 
 	<div class="container">
-<!-- 정보 -->
-	<h1 th:text="${a.name}" id="name"></h1>
-	<br>
-	<div>
-		<span style="font-size: 1.3em; font-weight: normal;">[숙박유형] &nbsp;</span>
-		<span style="font-size: 1.2em; font-weight: lighter;" th:text="${a.category}"></span>
-		<span style="font-size: 1.3em; font-weight: normal;">&nbsp;&nbsp;[주소] &nbsp;</span>
-		<span style="font-size: 1.2em; font-weight: lighter;" th:text="${a.addr}"></span>
-		<span style="font-size: 1.3em; font-weight: normal;">&nbsp;&nbsp;[전화번호] &nbsp;</span>
-		<span style="font-size: 1.2em; font-weight: lighter;" th:text="${a.phone}"></span>
-		<span style="font-size: 1.3em; font-weight: normal;">&nbsp;&nbsp;[가격] &nbsp;</span>
-		<span style="font-size: 1.2em; font-weight: lighter;" th:text="|${a.price}원|"></span>
-	</div>
-	
-	<div class="items-slider-container js-items-slider-container">
-	       <div class="slider slider-for">
-            <div th:each="path: ${photoList}">
-                <img th:src="|/${path}|">
-            </div>
-        </div>        
-        <div class="slider slider-nav" style="width: 1005px;height: 110px;">           
-            <div th:each="path: ${photoList}">
-                <img th:src="|/${path}|">
-            </div>
-        </div>     
-    </div>
-	<hr>
-	
-	<!-- 찜기능 -->
-	<th:block th:if="${session.loginM.role == 'user'}">
-		<span th:text="${session.loginM.role}"></span><br>
-		<span th:text="${session.loginM.name}"></span><br>
-		<div id="div_dolike" class="unshow">
-				<input type="button" value="찜하기" id="btn_dolike">
+		<!-- 헤더 -->
+    	<div th:insert="/main/Header.html"></div>
+    	<br>
+    	
+		<h1 th:text="${a.name}" id="name"></h1>
+		<br>
+		<div id="sidebarleft">
+			<div class="items-slider-container js-items-slider-container">
+			       <div class="slider slider-for">
+		            <div th:each="p : ${photoList}">
+		                <img th:src="|/${p.realPath}|">
+		            </div>
+		        </div>        
+		        <div class="slider slider-nav" style="width: 1005px;height: 110px;">           
+		            <div th:each="p : ${photoList}">
+		                <img th:src="|/${p.realPath}|">
+		            </div>
+		        </div>     
+		    </div>
 		</div>
-		<div id="div_unlike" class="unshow">
-				<input type="button" value="찜해제" id="btn_unlike">
+		<!-- 옆으로 나열 예정 -->
+		<div id="sidebarright">
+			<div>
+				<span style="font-size: 1.3em; font-weight: normal;">&nbsp;&nbsp;[숙박유형] &nbsp;</span><br>
+				&nbsp;&nbsp;&nbsp;<span style="font-size: 1.2em; font-weight: lighter;" th:text="${a.category}"></span><br>
+				<span style="font-size: 1.3em; font-weight: normal;">&nbsp;&nbsp;[주소] &nbsp;</span><br>
+				&nbsp;&nbsp;&nbsp;<span style="font-size: 1.2em; font-weight: lighter;" th:text="${a.addr}"></span><br>
+				<span style="font-size: 1.3em; font-weight: normal;">&nbsp;&nbsp;[전화번호] &nbsp;</span><br>
+				&nbsp;&nbsp;&nbsp;<span style="font-size: 1.2em; font-weight: lighter;" th:text="${a.phone}"></span><br>
+				<span style="font-size: 1.3em; font-weight: normal;">&nbsp;&nbsp;[가격] &nbsp;</span><br>
+				&nbsp;&nbsp;&nbsp;<span style="font-size: 1.2em; font-weight: lighter;" th:text="|${a.price}원|"></span><br>
+				<input type="hidden" id="price" th:value="${a.price}">
+				<br>
+			</div>
+			
+			<br>
+			
+			<!-- 찜기능 -->
+			<div>
+				<th:block th:if="${session.loginM != null and session.loginM.role != 'admin'}">
+					&nbsp;&nbsp;<div id="div_dolike" class="unshow">
+							<input type="image" src="/main/unlike.png" id="btn_dolike" width="40">
+					</div>
+					&nbsp;&nbsp;<div id="div_unlike" class="unshow">
+							<input type="image" src="/main/like.png" id="btn_unlike" width="40">
+					</div>
+					<br>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>찜하기</span>
+					<br><br><br>
+				</th:block>
+			</div>
+			
+			
+			
+			<!-- 결제 -->
+			<div>
+				<th:block th:if="${session.loginM != null and session.loginM.role != 'admin'}">
+				<form action="/accommo/reservation" method="post" id="payok">
+				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+					&nbsp;&nbsp;입실일자 <input type="date" name="date_s" id="date_s"><br>
+					&nbsp;&nbsp;퇴실일자 <input type="date" name="date_e" id="date_e"><br>
+					&nbsp;&nbsp;총 일자 <input type="text" id="totDate" readonly="readonly"><br>
+					&nbsp;&nbsp;총 인원 <input type="number" name="headCount" id="headCount"><br>
+					&nbsp;&nbsp;총 가격 <input type="text" name="totalPrice" id="totalPrice" readonly="readonly"><br>
+					<input type="hidden" name="accommoNo" th:value="${a.accommoNo}" id="accommoNo">
+					<input type="hidden" name="imp_uid" id="imp_uid">
+					<input type="hidden" name="merchant_uid" id="merchant_uid">
+					<input type="hidden" name="paid_amount" id="paid_amount">
+					<input type="hidden" name="apply_num" id="apply_num">
+				</form>
+				&nbsp;&nbsp;<button id="btnPay">결제하기</button>
+				</th:block>
+			</div>
+			
+			<!-- 관리자 기능 -->
+			<th:block th:if="${session.loginM != null and session.loginM.role != 'user'}">
+				<div>
+					<span th:text="${session.loginM.role}"></span><br>
+					<input type="button" id="btn_update" value="숙소 정보 수정"
+					th:onclick="|location.href='@{'/admin/accommo/update/'+${a.accommoNo}}'|">
+				</div>
+			</th:block>
 		</div>
-	</th:block>
-	
-	<!-- 관리자 기능 -->
-	<div>
-		<th:block th:unless="${session.loginM.role != 'admin'}">
-			<span th:text="${session.loginM.role}"></span><br>
-			<input type="button" id="btn_update" value="숙소 정보 수정"
-			th:onclick="|location.href='@{'/admin/accommo/update/'+${a.accommoNo}}'|">
-		</th:block>
-	</div>
-	
-	<!-- 결제 -->
-	<div>
-		<button id="btnPay">결제하기</button>
-		<hr>
-		<form action="/accommo/reservation" method="post" id="payok">
-			입실일자 <input type="date" name="date_s" id="date_s">
-			퇴실일자 <input type="date" name="date_e" id="date_e">
-			총 일자 <input type="text" id="totDate" readonly="readonly">
-			총 인원 <input type="number" name="headCount" id="headCount">
-			총 가격 <input type="text" name="totalPrice" id="totalPrice" readonly="readonly">
-			<input type="hidden" name="accommoNo" th:value="${a.accommoNo}" id="accommoNo">
-			<input type="hidden" name="imp_uid" id="imp_uid">
-			<input type="hidden" name="merchant_uid" id="merchant_uid">
-			<input type="hidden" name="paid_amount" id="paid_amount">
-			<input type="hidden" name="apply_num" id="apply_num">
-		</form>
-	</div>
+		
+		<!-- 리뷰 -->
+		<div>
+			<th:block th:if="${reviewList != null}">
+				<div th:each="r : ${reviewList}" style="">
+					리뷰 제목 : <span th:text="${r.title}"></span><br>
+					리뷰 내용 : <span th:text="${r.content}"></span><br>
+					<th:block th:each="num : ${#numbers.sequence(0,r.stars-1)}">
+						⭐
+					</th:block>
+				</div>
+			</th:block>
+		</div>
 	</div>
 </body>
 </html>

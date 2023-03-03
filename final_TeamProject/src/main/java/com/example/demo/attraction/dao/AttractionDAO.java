@@ -49,5 +49,17 @@ public class AttractionDAO {
 		return DBManager.findMostLike(count);
 	}
 	
+	public LikeVO findLikeByM(HashMap<String, Object> map){
+		return DBManager.findLikeByM(map);
+	}
+	
+	public int doLike(LikeVO l) {
+		return DBManager.doLike(l);
+	}
+	
+	public int unLike(LikeVO l) {
+		return DBManager.unLike(l);
+	}
+	
 	
 }
