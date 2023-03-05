@@ -21,6 +21,7 @@
      select T.*, rownum rn
      from  tbl_event T
      where memberno = #{memberno}
+     order by eventdate desc
    )
    where rn between #{start} and #{end}
   </select>
@@ -69,7 +70,7 @@
   </update>
   
   <insert id="insertEvent" parameterType="eventVO">
-  	insert into tbl_event(eventno, memberno, eventdate, category, amount) values(seq_eventno.nextval,#{memberno},to_char(sysdate,'YYYY-MM-DD'),'룰렛보상',#{point})
+  	insert into tbl_event(eventno, memberno, eventdate, category, amount) values(seq_eventno.nextval,#{memberno},sysdate,'룰렛보상',#{point})
   </insert>
   
   <select id="findInquiry" resultType="inquiryVO">
